@@ -1,0 +1,27 @@
+server:
+  port: 8080
+  environment: development
+  host: localhost
+
+database:
+  type: sqlite
+  dsn: ./data.db
+  # For MySQL:
+  # type: mysql
+  # dsn: user:password@tcp(localhost:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local
+  # For PostgreSQL:
+  # type: postgres
+  # dsn: host=localhost user=user password=password dbname=dbname port=5432 sslmode=disable TimeZone=UTC
+
+jwt:
+  secret_key: your-super-secret-jwt-key-change-in-production
+  access_token_duration: 15m
+  refresh_token_duration: 168h
+
+logger:
+  level: info
+  encoding: json
+  output_paths:
+    - stdout
+  error_output_paths:
+    - stderr
