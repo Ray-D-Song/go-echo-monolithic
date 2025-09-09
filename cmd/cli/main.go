@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/ray-d-song/go-echo-monolithic/internal/app"
+	"github.com/ray-d-song/go-echo-monolithic/internal/pkg/logger"
 	"github.com/ray-d-song/go-echo-monolithic/internal/repository"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -23,7 +24,7 @@ var migrateCmd = &cobra.Command{
 	Short: "Run database migrations",
 	Long:  "Run database migrations to set up or update the database schema",
 	Run: func(cmd *cobra.Command, args []string) {
-		runWithDI(func(migrator *repository.Migrator, logger *zap.Logger) {
+		runWithDI(func(migrator *repository.Migrator, logger *logger.Logger) {
 			logger.Info("Running database migrations...")
 			
 			if err := migrator.AutoMigrate(); err != nil {
@@ -45,7 +46,7 @@ var rollbackCmd = &cobra.Command{
 	Short: "Rollback database migrations",
 	Long:  "Drop all database tables (use with caution)",
 	Run: func(cmd *cobra.Command, args []string) {
-		runWithDI(func(migrator *repository.Migrator, logger *zap.Logger) {
+		runWithDI(func(migrator *repository.Migrator, logger *logger.Logger) {
 			logger.Warn("Rolling back database migrations (dropping all tables)...")
 			
 			if err := migrator.DropTables(); err != nil {
@@ -63,7 +64,7 @@ var cleanupCmd = &cobra.Command{
 	Short: "Cleanup expired tokens",
 	Long:  "Remove expired refresh tokens from the database",
 	Run: func(cmd *cobra.Command, args []string) {
-		runWithDI(func(authRepo *repository.AuthRepository, logger *zap.Logger) {
+		runWithDI(func(authRepo *repository.AuthRepository, logger *logger.Logger) {
 			logger.Info("Cleaning up expired tokens...")
 			
 			if err := authRepo.CleanupExpiredTokens(); err != nil {

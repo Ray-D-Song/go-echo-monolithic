@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
+	"github.com/ray-d-song/go-echo-monolithic/internal/pkg/logger"
 	"go.uber.org/zap"
 )
 
@@ -15,7 +16,7 @@ type WebSocketService struct {
 	upgrader websocket.Upgrader
 	clients  map[*websocket.Conn]*Client
 	mutex    sync.RWMutex
-	logger   *zap.Logger
+	logger   *logger.Logger
 }
 
 // Client represents a WebSocket client
@@ -34,7 +35,7 @@ type Message struct {
 }
 
 // NewWebSocketService creates a new WebSocket service
-func NewWebSocketService(logger *zap.Logger) *WebSocketService {
+func NewWebSocketService(logger *logger.Logger) *WebSocketService {
 	return &WebSocketService{
 		upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {

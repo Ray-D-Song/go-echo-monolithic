@@ -97,7 +97,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("jwt.access_secret", "your-access-secret")
 	v.SetDefault("jwt.refresh_secret", "your-refresh-secret")
 	v.SetDefault("jwt.access_token_duration", "15m")
-	v.SetDefault("jwt.refresh_token_duration", "7d")
+	v.SetDefault("jwt.refresh_token_duration", "168h")
 
 	// Logger defaults
 	v.SetDefault("logger.level", "info")

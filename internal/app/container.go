@@ -12,7 +12,6 @@ import (
 	"github.com/ray-d-song/go-echo-monolithic/internal/repository"
 	"github.com/ray-d-song/go-echo-monolithic/internal/service"
 	"go.uber.org/fx"
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -27,7 +26,13 @@ var Container = fx.Options(
 	}),
 
 	// Database
-	fx.Provide(database.NewConnection),
+	fx.Provide(func(cfg *config.Config) (*gorm.DB, error) {
+		conn, err := database.NewConnection(&cfg.Database)
+		if err != nil {
+			return nil, err
+		}
+		return conn.DB, nil
+	}),
 
 	// JWT Manager
 	fx.Provide(func(cfg *config.Config) (*jwt.Manager, error) {
@@ -61,7 +66,7 @@ var Container = fx.Options(
 	) *service.AuthService {
 		return service.NewAuthService(userRepo, authRepo, jwtManager, validator, userService)
 	}),
-	fx.Provide(func(logger *zap.Logger) *service.WebSocketService {
+	fx.Provide(func(logger *logger.Logger) *service.WebSocketService {
 		return service.NewWebSocketService(logger)
 	}),
 
@@ -72,17 +77,27 @@ var Container = fx.Options(
 	fx.Provide(func(userService *service.UserService) *handler.UserHandler {
 		return handler.NewUserHandler(userService)
 	}),
-	fx.Provide(func(wsService *service.WebSocketService, logger *zap.Logger) *handler.WebSocketHandler {
+	fx.Provide(func(wsService *service.WebSocketService, logger *logger.Logger) *handler.WebSocketHandler {
 		return handler.NewWebSocketHandler(wsService, logger)
 	}),
 
 	// Middleware
-	fx.Provide(func(jwtManager *jwt.Manager) echo.MiddlewareFunc {
-		return middleware.JWTAuth(jwtManager)
-	}),
-	fx.Provide(func(logger *zap.Logger) echo.MiddlewareFunc {
-		return middleware.Logger(logger)
-	}),
+	fx.Provide(
+		fx.Annotate(
+			func(jwtManager *jwt.Manager) echo.MiddlewareFunc {
+				return middleware.JWTAuth(jwtManager)
+			},
+			fx.ResultTags(`name:"JWTAuthMiddleware"`),
+		),
+	),
+	fx.Provide(
+		fx.Annotate(
+			func(logger *logger.Logger) echo.MiddlewareFunc {
+				return middleware.Logger(logger)
+			},
+			fx.ResultTags(`name:"LoggerMiddleware"`),
+		),
+	),
 
 	// Server
 	fx.Provide(NewServer),

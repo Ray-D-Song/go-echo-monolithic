@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/ray-d-song/go-echo-monolithic/internal/app"
+	"github.com/ray-d-song/go-echo-monolithic/internal/pkg/logger"
 	"github.com/ray-d-song/go-echo-monolithic/internal/repository"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -49,7 +50,7 @@ func main() {
 func startServer(
 	server *app.Server,
 	migrator *repository.Migrator,
-	logger *zap.Logger,
+	logger *logger.Logger,
 	lifecycle fx.Lifecycle,
 ) {
 	lifecycle.Append(fx.Hook{

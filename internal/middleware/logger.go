@@ -5,11 +5,12 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/ray-d-song/go-echo-monolithic/internal/pkg/logger"
 	"go.uber.org/zap"
 )
 
 // Logger returns the logger middleware
-func Logger(logger *zap.Logger) echo.MiddlewareFunc {
+func Logger(logger *logger.Logger) echo.MiddlewareFunc {
 	return middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogStatus:    true,
 		LogURI:       true,
@@ -22,7 +23,7 @@ func Logger(logger *zap.Logger) echo.MiddlewareFunc {
 		HandleError:  true, // forwards error to the global error handler, so it can decide appropriate status code
 		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
 			if v.Error == nil {
-				logger.Info("request",
+				logger.Logger.Info("request",
 					zap.String("method", v.Method),
 					zap.String("uri", v.URI),
 					zap.Int("status", v.Status),
@@ -32,7 +33,7 @@ func Logger(logger *zap.Logger) echo.MiddlewareFunc {
 					zap.String("user_agent", v.UserAgent),
 				)
 			} else {
-				logger.Error("request",
+				logger.Logger.Error("request",
 					zap.String("method", v.Method),
 					zap.String("uri", v.URI),
 					zap.Int("status", v.Status),

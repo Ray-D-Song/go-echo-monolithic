@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/ray-d-song/go-echo-monolithic/internal/pkg/logger"
 	"github.com/ray-d-song/go-echo-monolithic/internal/pkg/response"
 	"github.com/ray-d-song/go-echo-monolithic/internal/service"
 	"go.uber.org/zap"
@@ -10,11 +11,11 @@ import (
 // WebSocketHandler handles WebSocket HTTP requests
 type WebSocketHandler struct {
 	wsService *service.WebSocketService
-	logger    *zap.Logger
+	logger    *logger.Logger
 }
 
 // NewWebSocketHandler creates a new WebSocket handler
-func NewWebSocketHandler(wsService *service.WebSocketService, logger *zap.Logger) *WebSocketHandler {
+func NewWebSocketHandler(wsService *service.WebSocketService, logger *logger.Logger) *WebSocketHandler {
 	return &WebSocketHandler{
 		wsService: wsService,
 		logger:    logger,

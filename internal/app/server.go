@@ -11,6 +11,7 @@ import (
 	"github.com/ray-d-song/go-echo-monolithic/internal/config"
 	"github.com/ray-d-song/go-echo-monolithic/internal/handler"
 	"github.com/ray-d-song/go-echo-monolithic/internal/middleware"
+	"github.com/ray-d-song/go-echo-monolithic/internal/pkg/logger"
 	"github.com/ray-d-song/go-echo-monolithic/internal/repository"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -20,16 +21,16 @@ import (
 type Server struct {
 	echo   *echo.Echo
 	config *config.Config
-	logger *zap.Logger
+	logger *logger.Logger
 }
 
 // ServerParams holds server dependencies
 type ServerParams struct {
 	fx.In
 
-	Config     *config.Config
-	Logger     *zap.Logger
-	Migrator   *repository.Migrator
+	Config   *config.Config
+	Logger   *logger.Logger
+	Migrator *repository.Migrator
 
 	// Handlers
 	AuthHandler      *handler.AuthHandler
@@ -37,8 +38,8 @@ type ServerParams struct {
 	WebSocketHandler *handler.WebSocketHandler
 
 	// Middleware
-	AuthMiddleware   echo.MiddlewareFunc
-	LoggerMiddleware echo.MiddlewareFunc
+	AuthMiddleware   echo.MiddlewareFunc `name:"JWTAuthMiddleware"`
+	LoggerMiddleware echo.MiddlewareFunc `name:"LoggerMiddleware"`
 }
 
 // NewServer creates a new HTTP server
@@ -137,7 +138,7 @@ func (s *Server) Start(ctx context.Context, migrator *repository.Migrator) error
 
 	// Start server
 	addr := fmt.Sprintf(":%d", s.config.Server.Port)
-	s.logger.Info("Starting HTTP server", 
+	s.logger.Info("Starting HTTP server",
 		zap.String("addr", addr),
 	)
 
