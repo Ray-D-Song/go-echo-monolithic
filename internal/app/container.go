@@ -52,6 +52,9 @@ var Container = fx.Options(
 	fx.Provide(func(db *gorm.DB) *repository.Migrator {
 		return repository.NewMigrator(db)
 	}),
+	fx.Provide(func(db *gorm.DB) *repository.KVRepository {
+		return repository.NewKVRepository(db)
+	}),
 
 	// Services
 	fx.Provide(func(userRepo *repository.UserRepository) *service.UserService {
@@ -79,6 +82,9 @@ var Container = fx.Options(
 	}),
 	fx.Provide(func(wsService *service.WebSocketService, logger *logger.Logger) *handler.WebSocketHandler {
 		return handler.NewWebSocketHandler(wsService, logger)
+	}),
+	fx.Provide(func(kvRepo *repository.KVRepository) *handler.ConfigHandler {
+		return handler.NewConfigHandler(kvRepo)
 	}),
 
 	// Middleware

@@ -13,8 +13,11 @@ import (
 	"github.com/ray-d-song/go-echo-monolithic/internal/middleware"
 	"github.com/ray-d-song/go-echo-monolithic/internal/pkg/logger"
 	"github.com/ray-d-song/go-echo-monolithic/internal/repository"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+
+	_ "github.com/ray-d-song/go-echo-monolithic/docs"
 )
 
 // Server represents the HTTP server
@@ -36,6 +39,7 @@ type ServerParams struct {
 	AuthHandler      *handler.AuthHandler
 	UserHandler      *handler.UserHandler
 	WebSocketHandler *handler.WebSocketHandler
+	ConfigHandler    *handler.ConfigHandler
 
 	// Middleware
 	AuthMiddleware   echo.MiddlewareFunc `name:"JWTAuthMiddleware"`
@@ -93,6 +97,9 @@ func (s *Server) setupMiddleware(params ServerParams) {
 
 // setupRoutes configures application routes
 func (s *Server) setupRoutes(params ServerParams) {
+	// Swagger documentation
+	s.echo.GET("/swagger/*", echoSwagger.WrapHandler)
+
 	// Health check endpoint
 	s.echo.GET("/health", s.healthCheck)
 
@@ -103,9 +110,17 @@ func (s *Server) setupRoutes(params ServerParams) {
 	params.AuthHandler.RegisterRoutes(s.echo)
 	params.UserHandler.RegisterRoutes(s.echo, params.AuthMiddleware)
 	params.WebSocketHandler.RegisterRoutes(s.echo, params.AuthMiddleware)
+	params.ConfigHandler.RegisterRoutes(s.echo, params.AuthMiddleware)
 }
 
 // healthCheck handles health check requests
+// @Summary		Health check
+// @Description	Check the health status of the service
+// @Tags			system
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	map[string]interface{}	"Service is healthy"
+// @Router			/health [get]
 func (s *Server) healthCheck(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"status":    "ok",
@@ -115,6 +130,13 @@ func (s *Server) healthCheck(c echo.Context) error {
 }
 
 // versionInfo handles version info requests
+// @Summary		Version info
+// @Description	Get service version information
+// @Tags			system
+// @Accept			json
+// @Produce		json
+// @Success		200	{object}	map[string]interface{}	"Version information"
+// @Router			/api/version [get]
 func (s *Server) versionInfo(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"version":   "1.0.0",

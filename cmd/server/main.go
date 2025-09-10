@@ -1,3 +1,24 @@
+// Package main provides the entry point for the go-echo-monolithic service
+//
+//	@title			Go Echo Monolithic API
+//	@version		1.0
+//	@description	A monolithic Go service built with Echo framework, featuring JWT authentication, WebSocket support, and comprehensive middleware
+//	@termsOfService	http://swagger.io/terms/
+//
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+//
+//	@license.name	MIT
+//	@license.url	https://opensource.org/licenses/MIT
+//
+//	@host		localhost:8080
+//	@BasePath	/api
+//
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Authorization
+//	@description				Type "Bearer" followed by a space and JWT token.
 package main
 
 import (
@@ -11,6 +32,8 @@ import (
 	"github.com/ray-d-song/go-echo-monolithic/internal/repository"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+
+	_ "github.com/ray-d-song/go-echo-monolithic/docs"
 )
 
 func main() {

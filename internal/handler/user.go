@@ -22,6 +22,17 @@ func NewUserHandler(userService *service.UserService) *UserHandler {
 }
 
 // GetProfile retrieves current user profile
+// @Summary		Get current user profile
+// @Description	Get the profile of the currently authenticated user
+// @Tags			users
+// @Accept			json
+// @Produce		json
+// @Security		BearerAuth
+// @Success		200	{object}	response.Response	"Profile retrieved successfully"
+// @Failure		401	{object}	response.Response	"Unauthorized"
+// @Failure		404	{object}	response.Response	"User not found"
+// @Failure		500	{object}	response.Response	"Internal server error"
+// @Router			/users/profile [get]
 func (h *UserHandler) GetProfile(c echo.Context) error {
 	userID := c.Get("user_id").(uint)
 
@@ -38,6 +49,19 @@ func (h *UserHandler) GetProfile(c echo.Context) error {
 }
 
 // GetUserByID retrieves user by ID
+// @Summary		Get user by ID
+// @Description	Get user information by user ID
+// @Tags			users
+// @Accept			json
+// @Produce		json
+// @Security		BearerAuth
+// @Param			id	path		int	true	"User ID"
+// @Success		200	{object}	response.Response	"User retrieved successfully"
+// @Failure		400	{object}	response.Response	"Invalid user ID"
+// @Failure		401	{object}	response.Response	"Unauthorized"
+// @Failure		404	{object}	response.Response	"User not found"
+// @Failure		500	{object}	response.Response	"Internal server error"
+// @Router			/users/{id} [get]
 func (h *UserHandler) GetUserByID(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
@@ -58,6 +82,19 @@ func (h *UserHandler) GetUserByID(c echo.Context) error {
 }
 
 // GetUserByUsername retrieves user by username
+// @Summary		Get user by username
+// @Description	Get user information by username
+// @Tags			users
+// @Accept			json
+// @Produce		json
+// @Security		BearerAuth
+// @Param			username	path		string	true	"Username"
+// @Success		200			{object}	response.Response	"User retrieved successfully"
+// @Failure		400			{object}	response.Response	"Username is required"
+// @Failure		401			{object}	response.Response	"Unauthorized"
+// @Failure		404			{object}	response.Response	"User not found"
+// @Failure		500			{object}	response.Response	"Internal server error"
+// @Router			/users/username/{username} [get]
 func (h *UserHandler) GetUserByUsername(c echo.Context) error {
 	username := c.Param("username")
 	if username == "" {
@@ -77,6 +114,20 @@ func (h *UserHandler) GetUserByUsername(c echo.Context) error {
 }
 
 // UpdateProfile updates current user profile
+// @Summary		Update user profile
+// @Description	Update the profile of the currently authenticated user
+// @Tags			users
+// @Accept			json
+// @Produce		json
+// @Security		BearerAuth
+// @Param			request	body		types.UpdateUserRequest	true	"Update user request"
+// @Success		200		{object}	response.Response			"Profile updated successfully"
+// @Failure		400		{object}	response.Response			"Bad request"
+// @Failure		401		{object}	response.Response			"Unauthorized"
+// @Failure		404		{object}	response.Response			"User not found"
+// @Failure		409		{object}	response.Response			"Email already in use"
+// @Failure		500		{object}	response.Response			"Internal server error"
+// @Router			/users/profile [put]
 func (h *UserHandler) UpdateProfile(c echo.Context) error {
 	userID := c.Get("user_id").(uint)
 
@@ -102,6 +153,18 @@ func (h *UserHandler) UpdateProfile(c echo.Context) error {
 }
 
 // ListUsers retrieves users with pagination
+// @Summary		List users
+// @Description	Retrieve a paginated list of users
+// @Tags			users
+// @Accept			json
+// @Produce		json
+// @Security		BearerAuth
+// @Param			page	query		int	false	"Page number (default: 1)"
+// @Param			limit	query		int	false	"Items per page (default: 20, max: 100)"
+// @Success		200	{object}	response.Response	"Users retrieved successfully"
+// @Failure		401	{object}	response.Response	"Unauthorized"
+// @Failure		500	{object}	response.Response	"Internal server error"
+// @Router			/users [get]
 func (h *UserHandler) ListUsers(c echo.Context) error {
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	if page < 1 {
@@ -142,6 +205,19 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 }
 
 // DeleteUser soft deletes a user
+// @Summary		Delete user
+// @Description	Soft delete a user by ID
+// @Tags			users
+// @Accept			json
+// @Produce		json
+// @Security		BearerAuth
+// @Param			id	path		int	true	"User ID"
+// @Success		200	{object}	response.Response	"User deleted successfully"
+// @Failure		400	{object}	response.Response	"Invalid user ID"
+// @Failure		401	{object}	response.Response	"Unauthorized"
+// @Failure		404	{object}	response.Response	"User not found"
+// @Failure		500	{object}	response.Response	"Internal server error"
+// @Router			/users/{id} [delete]
 func (h *UserHandler) DeleteUser(c echo.Context) error {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 32)
