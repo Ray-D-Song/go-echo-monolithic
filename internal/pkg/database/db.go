@@ -5,11 +5,11 @@ import (
 	"strings"
 
 	"github.com/ray-d-song/go-echo-monolithic/internal/config"
+	"github.com/ray-d-song/go-echo-monolithic/internal/pkg/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 // Connection wraps the database connection
@@ -18,7 +18,7 @@ type Connection struct {
 }
 
 // NewConnection creates a new database connection based on the configuration
-func NewConnection(cfg *config.DatabaseConfig) (*Connection, error) {
+func NewConnection(cfg *config.DatabaseConfig, log *logger.Logger) (*Connection, error) {
 	var dialector gorm.Dialector
 
 	switch strings.ToLower(cfg.Type) {
@@ -33,7 +33,7 @@ func NewConnection(cfg *config.DatabaseConfig) (*Connection, error) {
 	}
 
 	db, err := gorm.Open(dialector, &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: NewGormLogger(log),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)

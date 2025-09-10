@@ -26,8 +26,8 @@ var Container = fx.Options(
 	}),
 
 	// Database
-	fx.Provide(func(cfg *config.Config) (*gorm.DB, error) {
-		conn, err := database.NewConnection(&cfg.Database)
+	fx.Provide(func(cfg *config.Config, logger *logger.Logger) (*gorm.DB, error) {
+		conn, err := database.NewConnection(&cfg.Database, logger)
 		if err != nil {
 			return nil, err
 		}

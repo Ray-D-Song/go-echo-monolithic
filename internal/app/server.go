@@ -13,6 +13,7 @@ import (
 	"github.com/ray-d-song/go-echo-monolithic/internal/middleware"
 	"github.com/ray-d-song/go-echo-monolithic/internal/pkg/logger"
 	"github.com/ray-d-song/go-echo-monolithic/internal/repository"
+	"github.com/ray-d-song/go-echo-monolithic/internal/static"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -111,6 +112,15 @@ func (s *Server) setupRoutes(params ServerParams) {
 	params.UserHandler.RegisterRoutes(s.echo, params.AuthMiddleware)
 	params.WebSocketHandler.RegisterRoutes(s.echo, params.AuthMiddleware)
 	params.ConfigHandler.RegisterRoutes(s.echo, params.AuthMiddleware)
+
+	// Embedded static file serving for SPA
+	s.echo.Use(echoMiddleware.StaticWithConfig(echoMiddleware.StaticConfig{
+		Root:       "/",
+		Index:      "index.html",
+		Browse:     false,
+		HTML5:      true,
+		Filesystem: http.FS(static.GetWebFS()),
+	}))
 }
 
 // healthCheck handles health check requests
