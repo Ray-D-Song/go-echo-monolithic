@@ -20,12 +20,14 @@ func (m *Migrator) AutoMigrate() error {
 	return m.db.AutoMigrate(
 		&model.User{},
 		&model.RefreshToken{},
+		&model.KV{},
 	)
 }
 
 // DropTables drops all tables (use with caution)
 func (m *Migrator) DropTables() error {
 	return m.db.Migrator().DropTable(
+		&model.KV{},
 		&model.RefreshToken{},
 		&model.User{},
 	)

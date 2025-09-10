@@ -8,5 +8,6 @@ type User struct {
 	PasswordHash string `json:"-" gorm:"not null"`
 	FirstName    string `json:"first_name"`
 	LastName     string `json:"last_name"`
+	Role         string `json:"role"`
 	IsActive     bool   `json:"is_active" gorm:"default:true"`
 }
