@@ -1,7 +1,7 @@
-# Makefile for go-echo-monolithic
+# Makefile for burn-after-read
 
 # Variables
-PROJECT_NAME := go-echo-monolithic
+PROJECT_NAME := burn-after-read
 BUILD_DIR := bin
 SERVER_BINARY := $(BUILD_DIR)/server
 CLI_BINARY := $(BUILD_DIR)/cli
@@ -11,6 +11,7 @@ GOCMD := go
 GOBUILD := $(GOCMD) build
 GOTEST := $(GOCMD) test
 GOGET := $(GOCMD) get
+GOINSTALL := $(GOCMD) install
 GOMOD := $(GOCMD) mod
 GOFMT := $(GOCMD) fmt
 GOVET := $(GOCMD) vet
@@ -94,7 +95,7 @@ run: server migrate-up
 # Run server with hot reload (requires air)
 dev:
 	@echo "Starting development server with hot reload..."
-	air
+	air --build.cmd "make server" --build.bin "./bin/server"
 
 # Clean build artifacts
 clean:
@@ -123,8 +124,8 @@ check: fmt vet test
 # Install development tools
 install-tools:
 	@echo "Installing development tools..."
-	$(GOGET) github.com/cosmtrek/air@latest
-	$(GOGET) github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	$(GOINSTALL) github.com/air-verse/air@latest
+	$(GOINSTALL) github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
 # Help
 help:

@@ -115,10 +115,17 @@ func (s *Server) setupRoutes(params ServerParams) {
 
 	// Embedded static file serving for SPA
 	s.echo.Use(echoMiddleware.StaticWithConfig(echoMiddleware.StaticConfig{
-		Root:       "/",
-		Index:      "index.html",
-		Browse:     false,
-		HTML5:      true,
+		Root:   "/",
+		Index:  "index.html",
+		Browse: false,
+		HTML5:  true,
+		Skipper: func(c echo.Context) bool {
+			// Skip static file handling for API routes
+			path := c.Request().URL.Path
+			return (len(path) >= 4 && path[:4] == "/api") ||
+				path == "/health" ||
+				(len(path) >= 8 && path[:8] == "/swagger")
+		},
 		Filesystem: http.FS(static.GetWebFS()),
 	}))
 }
