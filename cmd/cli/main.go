@@ -77,6 +77,24 @@ var cleanupCmd = &cobra.Command{
 	},
 }
 
+var seedCmd = &cobra.Command{
+	Use:   "seed",
+	Short: "Seed the database with sample data",
+	Long:  "Populate the database with predefined sample data for development and testing",
+	Run: func(cmd *cobra.Command, args []string) {
+		runWithDI(func(seeder *repository.Seeder, logger *logger.Logger) {
+			logger.Info("Starting database seeding...")
+			
+			if err := seeder.SeedAll(); err != nil {
+				logger.Fatal("Seeding failed", zap.Error(err))
+				return
+			}
+			
+			logger.Info("Database seeding completed successfully")
+		})
+	},
+}
+
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Show version information",
@@ -89,6 +107,7 @@ var versionCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(migrateCmd)
 	rootCmd.AddCommand(rollbackCmd)
+	rootCmd.AddCommand(seedCmd)
 	rootCmd.AddCommand(cleanupCmd)
 	rootCmd.AddCommand(versionCmd)
 }

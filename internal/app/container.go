@@ -55,6 +55,9 @@ var Container = fx.Options(
 	fx.Provide(func(db *gorm.DB) *repository.KVRepository {
 		return repository.NewKVRepository(db)
 	}),
+	fx.Provide(func(db *gorm.DB, logger *logger.Logger) *repository.Seeder {
+		return repository.NewSeeder(db, logger)
+	}),
 
 	// Services
 	fx.Provide(func(userRepo *repository.UserRepository) *service.UserService {
